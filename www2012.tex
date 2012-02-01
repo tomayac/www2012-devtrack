@@ -70,7 +70,7 @@ framexbottommargin=-1em,
 
 \begin{document}
 
-\title{Fixing the Web one page at a time,\\ or actually implementing XKCD \#37}
+\title{Fixing the Web one page at a time,\\ or actually implementing xkcd \#37}
 
 \numberofauthors{2}
 \author{
@@ -95,7 +95,7 @@ Ruben Verborgh\\
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\columnwidth]{hyphen.jpg}
-\caption{XKCD \#37 -- I do this constantly.}
+\caption{xkcd \#37 -- I do this constantly \cite{xkcd37}.}
 \label{fig:xkcd37}
 \end{figure}
 \end{abstract}
@@ -168,7 +168,7 @@ the non-breaking space typically gets represented by a~normal white space charac
 \section{Further Use Cases}
 In this Section, we present further use cases where client-side fixing of Web pages can be considered useful.
 
-\textbf{XKCD \#37:} The Web comic XKCD in its episode \#37 proposes the mental experiment of shifting the hyphen in word combinations of the form \mbox{``[adjective]-ass [noun]''} one word to the right,
+\textbf{xkcd \#37:} The Web comic xkcd in its episode \#37 proposes the mental experiment of shifting the hyphen in word combinations of the form \mbox{``[adjective]-ass [noun]''} one word to the right,
 so that the resulting word combination reads \mbox{``[adjective] ass-[noun]''}.
 
 \textbf{Emoticons:} An emoticon is a pictorial representation of a facial expression using punctuation marks and letters,
@@ -181,19 +181,20 @@ Not emoticon-aware software unfortunately still has the tendency to break lines 
 \section{Implementation}
 In this Section, we detail the implementation and underlying technologies used.
 
-\subsection{Part of Speech Tagging}
-Our processing chain supports part of speech tagging via an open source JavaScript library called jspos\footnote{\url{http://code.google.com/p/jspos/}},
-eventually based on Eric Brill's POS tagger~\cite{brill1992simple}. Part of speech tagging does not yet play an active role in the processing chain. However,
-we aim for leveraging the additional data for better micropost analysis in the future.
+\subsection{Part-of-Speech Tagging}
+A simple definition of part-of-speech tagging (POS) is the process of identifying words in a text as nouns, verbs, adjectives, adverbs, etc., based on both their definition, as well as their context.
+Our processing chain supports part-of-speech tagging via an open source JavaScript library called jspos\footnote{\url{http://code.google.com/p/jspos/}},
+eventually based on Eric Brill's POS tagger~\cite{brill1992simple}.
 
-\subsection{Google Chrome Extensions}
-Google Chrome extensions are small software programs that users can install to enrich their browsing experience with the Google Chrome browser.
+\subsection{Browser Extensions}
+Browser extensions are small software programs that users can install to enrich their browsing experience with Web browsers.
 They are written using a combination of standard Web technologies, such as HTML, JavaScript, and CSS.
 There are several types of extensions; for this paper we focus on extensions based on so-called \emph{content scripts}.
 Content scripts are JavaScript programs that run in the context of Web pages via dynamic code injection.
 By using the standard Document Object Model (DOM), they can modify details of Web pages.
 
-\subsection{Using Google Docs with JSON-P}
+\subsection{Using Google Spreadsheets with JSON-P}
+
 \cite{jsonp2009}
 
 \subsection{Listening on DOM Changes}
@@ -213,7 +214,7 @@ on DOM node inserted (new node)
 end on DOM node inserted
 
 // Helper function
-function processRules(textNode)
+function processRules(text node)
   for all rules as rule
     if rule is regular expression rule
       apply rule to text node

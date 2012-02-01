@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "xkcd #37",
+    "description": "Extension name"
+  },
+  "extDesc": {
+    "message": "This extension actually implements xkcd #37. Yeah, for real.",
+    "description": "Extension description"
+  },
+  "extTitle": {
+    "message": "xkcd #37",
+    "description": "Extension description"
+  }  
+}

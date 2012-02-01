@@ -194,6 +194,7 @@ Content scripts are JavaScript programs that run in the context of Web pages via
 By using the standard Document Object Model (DOM), they can modify details of Web pages.
 
 \subsection{Using Google Docs with JSON-P}
+\cite{jsonp2009}
 
 \subsection{Listening on DOM Changes}
 \cite{w3cevents2011}
@@ -215,7 +216,7 @@ end on DOM node inserted
 function processRules(textNode)
   for all rules as rule
     if rule is regular expression rule
-      apply rule to textNode
+      apply rule to text node
     else if rule is part-of-speech tagging rule
       apply part-of-speech tagging to text node
       apply rule to parsed text node

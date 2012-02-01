@@ -178,6 +178,52 @@ and can change and improve interpretation of plain text.
 Not emoticon-aware software unfortunately still has the tendency to break lines in the middle of an emoticon \texttt{:-} \linebreak % !!!!!!!!! IMPORTANT !!!!!!!!!
 \texttt{(}. This can be avoided by the dynamic client-side insertion of non-breaking spaces.
 
+\section{Implementation}
+In this Section, we detail the implementation and underlying technologies used.
+
+\subsection{Part of Speech Tagging}
+Our processing chain supports part of speech tagging via an open source JavaScript library called jspos\footnote{\url{http://code.google.com/p/jspos/}},
+eventually based on Eric Brill's POS tagger~\cite{brill1992simple}. Part of speech tagging does not yet play an active role in the processing chain. However,
+we aim for leveraging the additional data for better micropost analysis in the future.
+
+\subsection{Google Chrome Extensions}
+Google Chrome extensions are small software programs that users can install to enrich their browsing experience with the Google Chrome browser.
+They are written using a combination of standard Web technologies, such as HTML, JavaScript, and CSS.
+There are several types of extensions; for this paper we focus on extensions based on so-called \emph{content scripts}.
+Content scripts are JavaScript programs that run in the context of Web pages via dynamic code injection.
+By using the standard Document Object Model (DOM), they can modify details of Web pages.
+
+\subsection{Using Google Docs with JSON-P}
+
+\subsection{Listening on DOM Changes}
+\cite{w3cevents2011}
+
+\begin{lstlisting}[caption=Pseudocode illustrating the browser extension's functionality., label=code:xkcd, float=h, escapechar=§, belowskip=-1em]
+// Initial processing
+for all text nodes of DOM tree as text node
+  processRules(text node)
+end for  
+
+// DOMNodeInserted Event Listener
+on DOM node inserted (new node)
+  for all text nodes of new node as text node
+    processRules(text node)
+  end for  
+end on DOM node inserted
+
+// Helper function
+function processRules(textNode)
+  for all rules as rule
+    if rule is regular expression rule
+      apply rule to textNode
+    else if rule is part-of-speech tagging rule
+      apply part-of-speech tagging to text node
+      apply rule to parsed text node
+    end if
+  end for
+end function  
+\end{lstlisting} 
+
 \section{Acknowledgments}
 None. The world is to acknowledge us for this work.
 

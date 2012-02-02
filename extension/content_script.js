@@ -43,7 +43,7 @@
     item = item.replace(/(\w+)-(ass)(\s+)(\w+)/gi, function (original, adjective, ass, space, noun) {
       // is the first word really an adjective and the second really a noun?
       var taggedWords = tagger.tag([adjective.toLowerCase(), noun]);
-      if (taggedWords[0][1].match(/^JJ$/) && taggedWords[1][1].match(/^NN/))
+      if (taggedWords[0][1].match(/^JJ$/) && taggedWords[1][1].match(/^NN|^VBG$/))
         // then perform the replacement from "smart-ass car" to "smart ass-car"
         var replacement = adjective + space + ass + '-' + noun;
       // log and return result

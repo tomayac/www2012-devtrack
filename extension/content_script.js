@@ -2,18 +2,38 @@
   
   // rules store 
   var rules = {
+    // replace three dots by an ellipsis
     ellipsis: {
       regexp: new RegExp('\\.\\.\\.', 'g'),
       replacement: '\u2026'
     },
+    
+    // avoid orphan "a"s
     nonBreakingSpace: {
       regexp: new RegExp('(\\ba)\\s(\\w+\\b)', 'g'),
       replacement: '$1\u00A0$2'
     },
-    emoticon: { // :-) :-( :-D :-| :-P :-p etc.
+    
+    // don't break :-) :-( :-D :-| :-P :-p etc.
+    emoticon: {
       regexp: new RegExp('(\\:)(\\-)([\\)|\\(|\\|D||p|P])', 'g'),
       replacement: '$1\uFEFF$2\uFEFF$3'
     },
+    
+    // replace "[adjective]-ass [noun]" to "[adjective] ass-[noun]" where applicable
+    adjectiveAssNoun: {
+      regexp: /(\w+)-(ass)(\s+)(\w+)/gi,
+      replacement: function (original, adjective, ass, space, noun) {
+        // is the first word really an adjective and the second really a noun?
+        var taggedWords = tagger.tag([adjective.toLowerCase(), noun]);
+        if (taggedWords[0][1].match(/^JJ$/) && taggedWords[1][1].match(/^NN|^VBG$/))
+          // then perform the replacement from "smart-ass car" to "smart ass-car"
+          return adjective + space + ass + '-' + noun;
+        else
+          // otherwise, don't change anything
+          return original;
+      }
+    }
   };
 	
   // gets all text nodes from the DOM tree starting from a given root
@@ -39,18 +59,7 @@
       return item;
     }
     
-    // replace "[adjective]-ass [noun]" to "[adjective] ass-[noun]" where applicable
-    item = item.replace(/(\w+)-(ass)(\s+)(\w+)/gi, function (original, adjective, ass, space, noun) {
-      // is the first word really an adjective and the second really a noun?
-      var taggedWords = tagger.tag([adjective.toLowerCase(), noun]);
-      if (taggedWords[0][1].match(/^JJ$/) && taggedWords[1][1].match(/^NN|^VBG$/))
-        // then perform the replacement from "smart-ass car" to "smart ass-car"
-        var replacement = adjective + space + ass + '-' + noun;
-      // log and return result
-      console.log('Replacing', original, 'by', replacement);
-      return replacement || original;
-    });
-    
+    // apply all rules to item
     return Object.keys(rules).reduce(function (item, ruleName) {
       var rule = rules[ruleName];
       return item.replace(rule.regexp, rule.replacement);

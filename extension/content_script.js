@@ -26,15 +26,23 @@
         null);    
   };
   
-  // applies all rules to the given text node
-  var applyRules = function applyRules(textNode) {
+  // applies all rules to the given text or XPathResult
+  function applyRules(item) {
+    if (item instanceof XPathResult) {
+      for (var i = 0, l = item.snapshotLength; i < l; i++) {
+        var textNode = item.snapshotItem(i);
+        textNode.data = applyRules(textNode.data);
+      }
+      return item;
+    }
+    
     var smartAss = /(.*?)((\b\w+)\-ass\s(\w+\b))(.*?)/gi;
-    if (smartAss.test(textNode.data)) {
-      var before = textNode.data.replace(smartAss, '$1');
-      var after = textNode.data.replace(smartAss, '$5');
-      var middle = textNode.data.replace(smartAss, '$2');
+    if (smartAss.test(item)) {
+      var before = item.replace(smartAss, '$1');
+      var after = item.replace(smartAss, '$5');
+      var middle = item.replace(smartAss, '$2');
       middle = middle.toLowerCase().replace(/\-ass\s/, ' ass ');
-      console.log('all: ' + textNode.data);      
+      console.log('all: ' + item);
       console.log('before: ' + before);
       console.log('middle: ' + middle);
       console.log('after: ' + after);
@@ -43,29 +51,25 @@
       if ((taggedWords[0][1] === 'JJ') &&
           (taggedWords[2][1].indexOf('NN') === 0)) {
         middle = middle.replace(/(\w+)\sass\s(\w+)/, '$1 ass-$2');      
-        textNode.data = before + middle + after;
+        item = before + middle + after;
       }
     }
     Object.keys(rules).forEach(function(ruleName) {
       var rule = rules[ruleName];
-      if (rule.regexp.test(textNode.data)) {
-        textNode.data = textNode.data.replace(rule.regexp, rule.replacement);
+      if (rule.regexp.test(item)) {
+        item = item.replace(rule.regexp, rule.replacement);
       }      
     });    
+    return item;
   };
 	
   // initial processing
-  var textNodes = getAllTextNodes(document.body);
-  for (var i = 0, l = textNodes.snapshotLength; i < l; i++) {      
-    applyRules(textNodes.snapshotItem(i));
-  }   
+  applyRules(getAllTextNodes(document.body));
+  document.title = applyRules(document.title);
   
 	// event listener to react on dynamic node insertions
 	document.body.addEventListener('DOMNodeInserted', function(e) {
-    var textNodes = getAllTextNodes(e.target);
-    for (var i = 0, l = textNodes.snapshotLength; i < l; i++) {       
-      applyRules(textNodes.snapshotItem(i));
-    }
+    applyRules(getAllTextNodes(e.target));
 	}, false);
 	
 })();

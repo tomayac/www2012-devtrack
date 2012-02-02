@@ -51,13 +51,10 @@
       return replacement || original;
     });
     
-    Object.keys(rules).forEach(function(ruleName) {
+    return Object.keys(rules).reduce(function (item, ruleName) {
       var rule = rules[ruleName];
-      if (rule.regexp.test(item)) {
-        item = item.replace(rule.regexp, rule.replacement);
-      }      
-    });    
-    return item;
+      return item.replace(rule.regexp, rule.replacement);
+    }, item);
   };
 	
   // initial processing

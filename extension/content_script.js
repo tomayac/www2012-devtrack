@@ -1,28 +1,73 @@
 (function() { 
   
+  // The callback for the rules JSON-P call to Google Docs. 
+  var script = document.createElement('script');
+  script.type = 'application/javascript';
+  document.body.appendChild(script);
+  // Microsyntax for functions in the Google Spreadsheet:
+  // - commas replaced by §
+  // - line breaks represented as \n
+  // - apostrophes ' escaped as \'
+  // - quotes " escaped as ""
+  //
+  // Need to go the ugly script.textContent way to be accessable from external.
+  //
+  // The alternative would be to ask for higher permissions in manifest.json in
+  // order to access docs.google.com (probably a bad thing).
+  script.textContent =
+      'var __callback_xkcd37 = function(/*opt args*/) {\n' +
+      '  var myRules = {};\n' +
+      '  var args = Array.prototype.slice.call(arguments);\n' +
+      '  for (var i = 1, l = args.length; i < l; i++) {\n' +
+      '    var line = args[i];\n' +
+      '    var parts = line.split(/,/).slice(1, -1);\n' +
+      '    var ruleName = parts[0];\n' +
+      '    var regexp = parts[1];\n' +
+      '    var flags = parts[2] ? parts[2] : \'\';\n' +
+      '    var replacement = parts[3].replace(/^"/, "").replace(/"$/, "");\n' +
+      '    replacement = replacement.replace(/§/g, ",");\n' +
+      '    replacement = replacement.indexOf(\'function\') === 0 ?\n' +
+      '       eval(\'(\' + replacement + \')\') : replacement;\n' +
+      '    myRules[ruleName] = {\n' +
+      '      regexp: new RegExp(regexp, flags),\n' +
+      '      replacement: replacement\n' +
+      '    };\n' +
+      '  }\n' +
+      '};';
+
+  // JSON-P at its worst
+  var ajax = function(url) {
+    var script = document.createElement('script');
+    script.type = 'application/javascript';
+    document.body.appendChild(script);
+    script.src = url;    
+  };
+  var url = 'https://docs.google.com/spreadsheet/ccc?key=0AtLlSNwL2H8YdGo5NjZRTHVGdV9NemF5SXBfaEI1VXc&output=csv';
+  ajax(url);
+
   // rules store 
   var rules = {
     // replace three dots by an ellipsis
     ellipsis: {
-      regexp: new RegExp('\\.\\.\\.', 'g'),
+      regexp: /\.\.\./g,
       replacement: '\u2026'
     },
     
     // avoid orphan 'a's
     nonBreakingSpace: {
-      regexp: new RegExp('(\\ba)\\s(\\w+\\b)', 'g'),
+      regexp: /(\ba)\s(\w+\b)/g,
       replacement: '$1\u00A0$2'
     },
     
     // don't break :-) :-( :-D :-| :-P :-p etc.
     emoticon: {
-      regexp: new RegExp('([\\:|;])(\\-)([\\)|\\(|\\|D||p|P])', 'g'),
+      regexp: /([\:|;])(\-)([\)|\(|\|D||p|P])/g,
       replacement: '$1\uFEFF$2\uFEFF$3'
     },
     
     // "who to follow" to "whom to follow"
     whomToFollow: {
-      regexp: new RegExp('Who\\sto\\sfollow', 'gi'),
+      regexp: /\bwho\sto\sfollow\b/gi,
       replacement: 'Whom to follow'
     },
     

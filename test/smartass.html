@@ -11,5 +11,22 @@
   <p>My bad-ass Chicks had dumb-ass training.</p>
   <p>My bad-ass Chicks had dumb-ass training... ;-)</p>
   <p>That is just a word.</p>
+  <p>
+  <button onclick="changeTitle();">Click me to change the title</button><br/>
+  Current Title: <span id="currentTitle"></span>
+  <p>
+  <button onclick="addNode();">Add DOM node</button><br/>
+  <script>
+    document.getElementById('currentTitle').innerHTML = document.title;
+    function changeTitle() {
+      document.title = 'My smart-ass cars are awesome ' + new Date().getTime();
+      document.getElementById('currentTitle').innerHTML = document.title;
+    }
+    function addNode() {
+      var node = document.createElement('p');
+      node.innerHTML = 'My smart-ass cars are awesome ' + new Date().getTime();
+      document.body.appendChild(node);
+    }    
+  </script>
 </body>
 </html>

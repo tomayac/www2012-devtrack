@@ -20,10 +20,16 @@
       replacement: '$1\uFEFF$2\uFEFF$3'
     },
     
+    // "who to follow" to "whom to follow"
+    whomToFollow: {
+      regexp: new RegExp('Who\\sto\\sfollow', 'gi'),
+      replacement: 'Whom to follow'
+    },
+    
     // turn "[adjective]-ass [noun]" into "[adjective] ass-[noun]"
     adjectiveAssNoun: {
       regexp: /(\w+)-(ass)(\s+)(\w+)/gi,
-      replacement: function (original, adjective, ass, space, noun) {
+      replacement: function(original, adjective, ass, space, noun) {
         // is the first word really an adjective and the second really a noun?
         var taggedWords = tagger.tag([adjective.toLowerCase(), noun]);
         if ((taggedWords[0][1].match(/^JJ$/)) &&
@@ -39,7 +45,7 @@
   };
 	
   // gets all text nodes from the DOM tree starting from a given root
-  var getAllTextNodes = function getAllTextNodes(root) {
+  var getAllTextNodes = function(root) {
     return document.evaluate(
         './/text()[normalize-space(.) != ""]',
         root,
@@ -51,11 +57,12 @@
   var tagger = new POSTagger();
   
   // applies all rules to the given text or XPathResult
-  var applyRules = function applyRules(item) {
+  var applyRules = function(item) {
     // apply rules to each item of the XPathResult
     if (item instanceof XPathResult) {
       for (var i = 0, l = item.snapshotLength; i < l; i++) {
         var textNode = item.snapshotItem(i);
+        // call yourself recursively
         textNode.data = applyRules(textNode.data);
       }      
     } else {    
@@ -71,12 +78,12 @@
   applyRules(getAllTextNodes(document.body));
   document.title = applyRules(document.title);
   
-	// event listener to react on dynamic DOM node insertions
-	document.body.addEventListener('DOMNodeInserted', function(e) {
+	// event listener to react on dynamic DOM subtree modifications
+	document.body.addEventListener('DOMSubtreeModified', function(e) {
     applyRules(getAllTextNodes(e.target));
 	}, false);
 
-  // event listener to react on dynamic DOM node modifications
+  // event listener to react on dynamic DOM node textual modifications
 	document.body.addEventListener('DOMCharacterDataModified', function(e) {
     e.target.data = applyRules(e.target.data);
 	}, false);	

@@ -77,10 +77,18 @@
       replacement: '\u201C$1\u201D'
     },
     
-    // numeric ranges should be separated by a figure dash instead of a hyphen
+    // replaces hyphens by figure dashes in phone numbers
+    phoneNumbers: {
+      regexp: /\d+-(?:\d+-)+\d+/g,
+      replacement: function(original) {
+        return original.replace(/-/g, '\u2012')
+      }
+    },
+    
+    // numeric ranges should be separated by an en dash instead of a hyphen
     numericRange: {
       regexp: /(\d+)-(\d+)/g,
-      replacement: '$1\u2012$2'
+      replacement: '$1\u2013$2'
     },
     
     // turn "[adjective]-ass [noun]" into "[adjective] ass-[noun]"

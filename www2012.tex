@@ -210,7 +210,7 @@ This means that a~single text node manipulation cycle after the initial page has
 
 Instead, we have to dynamically react on page changes by listening to DOM events~\cite{w3cevents2011}.
 Therefore, we add listeners for the \Verb!DOMCharacterDataModified! event, which occurs if the data of a~text node is changed.
-Additionally, we monitor the \Verb!DOMNodeInserted! event to watch if new elements are added to the DOM.
+Additionally, we monitor the \Verb!DOMSubtreeModified! event to watch when new elements are added to the DOM.
 If this is the case, we also inspect their contents for possible replacements.
 
 Finally, the \Verb!title! element deserves special attention.

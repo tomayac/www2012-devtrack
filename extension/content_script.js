@@ -67,8 +67,8 @@
     
     // "who to follow" to "whom to follow"
     whomToFollow: {
-      regexp: /\bwho\sto\sfollow\b/gi,
-      replacement: 'Whom to follow'
+      regexp: /\b(who)(\s+to\s+follow)\b/gi,
+      replacement: '$1m$2'
     },
     
     // correct ambidextrous double quotes to curved quotes

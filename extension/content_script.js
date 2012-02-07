@@ -124,7 +124,7 @@
   document.title = applyRules(document.title);
   
 	// event listener to react on dynamic DOM subtree modifications
-	document.body.addEventListener('DOMSubtreeModified', function(e) {
+	document.body.addEventListener('DOMNodeInserted', function(e) {
     applyRules(getAllTextNodes(e.target));
 	}, false);
 

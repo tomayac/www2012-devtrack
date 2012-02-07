@@ -205,7 +205,13 @@ http://jsperf.com/
 \subsection{Listening on DOM Changes}
 % Responsible: Ruben
 The functionality so far only enables us to fix the static Web, \emph{i.e.}, Web pages whose content remains unchanged during their entire lifetime.
-\cite{w3cevents2011}
+However, an important share of modern Web pages makes use of dynamically retrieved information, for example with AJAX technologies.
+This means that a~single text node manipulation cycle after the initial page has been loaded is insufficient.
+
+Instead, we have to dynamically react on page changes by listening to DOM events~\cite{w3cevents2011}.
+Therefore, we add listeners for the \Verb!DOMCharacterDataModified! event, which occurs if the data of a~text node is changed.
+Additionally, we monitor the \Verb!DOMNodeInserted! event to watch if new elements are added to the DOM.
+If this is the case, we also inspect their contents for possible replacements.
 
 \subsection{Security Considerations}
 % Responsible: Ruben

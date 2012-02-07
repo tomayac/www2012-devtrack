@@ -3,6 +3,7 @@
   <title>My smart-ass cars are awesome</title>
 </head>
 <body>
+  <div id="main">
   <p>Smart-ass cars are awesome.</p>
   <p>My smart-ass cars are awesome.</p>
   <p>My smart-ass cars attract bad-ass chicks.</p>
@@ -25,8 +26,9 @@
     function addNode() {
       var node = document.createElement('p');
       node.innerHTML = 'My smart-ass cars are awesome ' + new Date().getTime();
-      document.body.appendChild(node);
+      document.getElementById('main').appendChild(node);
     }    
   </script>
+  </div>
 </body>
 </html>

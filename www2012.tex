@@ -213,6 +213,11 @@ Therefore, we add listeners for the \Verb!DOMCharacterDataModified! event, which
 Additionally, we monitor the \Verb!DOMNodeInserted! event to watch if new elements are added to the DOM.
 If this is the case, we also inspect their contents for possible replacements.
 
+Finally, the \Verb!title! element deserves special attention.
+While it resides in the \Verb!head! element and thus out of the visible part of the DOM~(in the \Verb!body! element),
+browsers usually display the title in a~prominent place.
+For that reason, title changes are separately monitored by the \Verb!DOMSubtreeModified! event.
+
 \subsection{Security Considerations}
 % Responsible: Ruben
 

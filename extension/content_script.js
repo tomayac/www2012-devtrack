@@ -72,7 +72,7 @@
     },
     
     // correct ambidextrous double quotes to curved quotes
-    whomToFollow: {
+    curvedQuotes: {
       regexp: /"([^"]+)"/gi,
       replacement: '\u201C$1\u201D'
     },

@@ -71,6 +71,12 @@
       replacement: 'Whom to follow'
     },
     
+    // correct ambidextrous double quotes to curved quotes
+    whomToFollow: {
+      regexp: /"([^"]+)"/gi,
+      replacement: '\u201C$1\u201D'
+    },
+    
     // turn "[adjective]-ass [noun]" into "[adjective] ass-[noun]"
     adjectiveAssNoun: {
       regexp: /(\w+)-(ass)(\s+)(\w+)/gi,

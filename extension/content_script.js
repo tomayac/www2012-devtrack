@@ -106,7 +106,36 @@
           return original;
         }
       }
-    }
+    },
+    
+    // add an Oxford comma to "Huey, Dewey and Louie"
+    oxfordComma: {
+      regexp: /(\w+)\,\s+(\w+)\s+(and|or|nor)\s+(\w+)/gi,
+      replacement: function(original, noun1, noun2, conjunction, noun3) {
+        var taggedWords = tagger.tag([noun1, noun2, noun3]);
+        console.log(taggedWords);
+        // noun, noun, and noun
+        if ((taggedWords[0][1].match(/^NN|^VBG$/)) &&
+            (taggedWords[1][1].match(/^NN|^VBG$/)) &&
+            (taggedWords[2][1].match(/^NN|^VBG$/))) {          
+          return noun1 + ', ' + noun2 + ', ' + conjunction + ' ' + noun3;
+        // adjective, adjective, and adjective  
+        } else if ((taggedWords[0][1].match(/^JJ/)) &&
+                   (taggedWords[1][1].match(/^JJ/)) &&
+                   (taggedWords[2][1].match(/^JJ/))) {
+          return noun1 + ', ' + noun2 + ', ' + conjunction + ' ' + noun3;
+        // verb, verb, and verb  
+        } else if ((taggedWords[0][1].match(/^VB/)) &&
+                   (taggedWords[1][1].match(/^VB/)) &&
+                   (taggedWords[2][1].match(/^VB/))) {
+          return noun1 + ', ' + noun2 + ', ' + conjunction + ' ' + noun3;
+        } else {
+          // otherwise, don't change anything
+          return original;
+        }
+      }
+    },
+    
   };
 	
   // gets all text nodes from the DOM tree starting from a given root

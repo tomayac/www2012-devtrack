@@ -48,6 +48,11 @@
     overflow: hidden;
   }
   
+  .rule .remove {
+    width: 50px;
+    float: right;
+  }
+  
   .rule .replacement {
     max-width: 300px;
   }
@@ -84,14 +89,17 @@ jQuery(function ($) {
   var stopEdit;
 
   // add all rules to the container
+  var count = 0;
   $rules.append(rules.map(function (rule) {
+     var index = count++;
     // create rule widget
     var $label = $('<span>').addClass('name').append($('<span>').text(rule.name)),
         $regexp = $('<span>').addClass('regexp').append($('<span>').text(rule.regexp)),
         $replacement = $('<span>').addClass('replacement').append($('<span>').text(rule.replacement)),
+        $remove = $('<span>').addClass('remove').append($('<a href="javascript:">').text('remove')),
         $rule = $('<div>').addClass('rule ui-widget-content')
                           .addClass(rule.enabled ? 'enabled' : 'disabled')
-                          .append($label, $regexp, $replacement);
+                          .append($label, $regexp, $replacement, $remove);
     
     // toggle enabled on click
     $rule.click(save(function () {
@@ -146,6 +154,14 @@ jQuery(function ($) {
       $input.blur(stopEdit);
     });
     
+    // removing
+    $remove.click(save(function (event) {
+      if (confirm('Are you sure you want to remove "' + rule.name + '"?')) {
+        rules.splice(index, 1);
+      }
+      event.stopPropagation();
+    }, true));
+    
     return $rule[0];
   }));
   
@@ -154,10 +170,12 @@ jQuery(function ($) {
   $rules.disableSelection();
   
   // returns a function that saves that executes func and then saves the rule modifications
-  function save (func) {
+  function save (func, reload) {
     return function () {
       func.apply(this, arguments);
       localStorage.rules = JSON.stringify(rules);
+      if (reload)
+        window.location.reload();
     };
   }
 });

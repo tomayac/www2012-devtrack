@@ -162,15 +162,20 @@ jQuery(function ($) {
   });
   $rules.disableSelection();
   
-  // add reload link
-  $(document.body).append($('<a href="javascript:">').text("Reset default settings").click(function () {
+  // activate reload link
+  $("#add").click(save(function () {
+    rules.unshift({ name: "new rule", regexp: "regular expression", replacement: "replacement" });
+  }, true));
+  
+  // activate reload link
+  $("#reset").click(function () {
     if (confirm("Are you sure you want to reset to the default rules?")) {
       chrome.extension.sendRequest("reset", function (defaultRules) {
         rules = defaultRules;
         displayRules();
       });
     }
-  }));
+  });
   
   // returns a function that saves that executes func and then saves the rule modifications
   function save (func, reload) {
@@ -189,6 +194,8 @@ jQuery(function ($) {
 <header>
   <h1>xkcd #37 rules</h1>
 </header>
+<p><a id="add" href="javascript:">Add new rule</a></p>
 <div id="rules" class="ui-widget">
 </div>
+<p><a id="reset" href="javascript:">Reset default settings</a></p>
 </html>

@@ -178,6 +178,15 @@ jQuery(function ($) {
         window.location.reload();
     };
   }
+  
+  // add reload link
+  $(document.body).append($('<a href="javascript:">').text("Reset default settings").click(function () {
+    if (confirm("Are you sure you want to reset to the default rules?")) {
+      chrome.extension.sendRequest("reset", function () {
+        window.location.reload();
+      });
+    }
+  }));
 });
 </script>
 <head>

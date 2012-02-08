@@ -6,7 +6,7 @@
     xhr.onreadystatechange = function() {
       if (xhr.readyState == 4) {
         localStorage.rules = xhr.responseText;
-        callback && callback();
+        callback && callback(JSON.parse(xhr.responseText));
       }
     }
     xhr.send();

@@ -82,91 +82,89 @@ jQuery(function ($) {
   // obtain the rules
   var rules = JSON.parse(localStorage.rules);
   
-  // make a container for the rules
+  // get the container for the rules
   var $rules = $('#rules');
-  
-  // function to stop the current edit;
-  var stopEdit;
 
-  // add all rules to the container
-  var count = 0;
-  $rules.append(rules.map(function (rule) {
-     var index = count++;
-    // create rule widget
-    var $label = $('<span>').addClass('name').append($('<span>').text(rule.name)),
-        $regexp = $('<span>').addClass('regexp').append($('<span>').text(rule.regexp)),
-        $replacement = $('<span>').addClass('replacement').append($('<span>').text(rule.replacement)),
-        $remove = $('<span>').addClass('remove').append($('<a href="javascript:">').text('remove')),
-        $rule = $('<div>').addClass('rule ui-widget-content')
-                          .addClass(rule.enabled ? 'enabled' : 'disabled')
-                          .data('index', index)
-                          .append($label, $regexp, $replacement, $remove);
-    
-    // toggle enabled on click
-    $rule.click(save(function () {
-      if(!stopEdit) {
-        rule.enabled = !rule.enabled;
-        $rule.toggleClass('enabled disabled');
-      }
+  // create and activate the elements for editing the rules
+  function displayRules() {
+    // add all rules to the container
+    var count = 0;
+    $rules.empty().append(rules.map(function (rule) {
+       var index = count++;
+      // create rule widget
+      var $label = $('<span>').addClass('name').append($('<span>').text(rule.name)),
+          $regexp = $('<span>').addClass('regexp').append($('<span>').text(rule.regexp)),
+          $replacement = $('<span>').addClass('replacement').append($('<span>').text(rule.replacement)),
+          $remove = $('<span>').addClass('remove').append($('<a href="javascript:">').text('remove')),
+          $rule = $('<div>').addClass('rule ui-widget-content')
+                            .addClass(rule.enabled ? 'enabled' : 'disabled')
+                            .data('index', index)
+                            .append($label, $regexp, $replacement, $remove);
+      
+      // function to stop the current edit;
+      var stopEdit;
+      
+      // toggle enabled on click
+      $rule.click(save(function () {
+        if(!stopEdit) {
+          rule.enabled = !rule.enabled;
+          $rule.toggleClass('enabled disabled');
+        }
+      }));
+      
+      // label editing
+      $label.dblclick(function () {
+        var $input = $('<textarea>').val(rule.name);
+        $label.children().replaceWith($input);
+        
+        stopEdit = save(function () {
+          rule.name = $input.val();
+        }, true);
+        
+        $input.focus();
+        $input.blur(stopEdit);
+      });
+      
+      // regexp editing
+      $regexp.dblclick(function () {
+        var $input = $('<textarea>').val(rule.regexp);
+        $regexp.children().replaceWith($input);
+        
+        stopEdit = save(function () {
+          // todo: RegExp validation
+          rule.regexp = $input.val();
+        }, true);
+        
+        $input.focus();
+        $input.blur(stopEdit);
+      });
+      
+      // replacement editing
+      $replacement.dblclick(function () {
+        var $input = $('<textarea>').val(rule.replacement);
+        $replacement.children().replaceWith($input);
+        
+        stopEdit = save(function () {
+          // todo: validation (in case it is a function)
+          rule.replacement = $input.val();
+        }, true);
+        
+        $input.focus();
+        $input.blur(stopEdit);
+      });
+      
+      // removing
+      $remove.click(save(function (event) {
+        if (confirm('Are you sure you want to remove "' + rule.name + '"?')) {
+          rules.splice(index, 1);
+        }
+        event.stopPropagation();
+      }, true));
+      
+      return $rule[0];
     }));
-    
-    // label editing
-    $label.dblclick(function () {
-      var $input = $('<textarea>').val(rule.name);
-      $label.children().replaceWith($input);
-      
-      stopEdit = save(function () {
-        rule.name = $input.val();
-        $label.children().replaceWith($('<span>').text(rule.name));
-        stopEdit = null;
-      });
-      
-      $input.focus();
-      $input.blur(stopEdit);
-    });
-    
-    // regexp editing
-    $regexp.dblclick(function () {
-      var $input = $('<textarea>').val(rule.regexp);
-      $regexp.children().replaceWith($input);
-      
-      stopEdit = save(function () {
-        rule.regexp = $input.val();
-        // todo: RegExp validation
-        $regexp.children().replaceWith($('<span>').text(rule.regexp));
-        stopEdit = null;
-      });
-      
-      $input.focus();
-      $input.blur(stopEdit);
-    });
-    
-    // replacement editing
-    $replacement.dblclick(function () {
-      var $input = $('<textarea>').val(rule.replacement);
-      $replacement.children().replaceWith($input);
-      
-      stopEdit = save(function () {
-        rule.replacement = $input.val();
-        // todo: validation (in case it is a function)
-        $replacement.children().replaceWith($('<span>').text(rule.replacement));
-        stopEdit = null;
-      });
-      
-      $input.focus();
-      $input.blur(stopEdit);
-    });
-    
-    // removing
-    $remove.click(save(function (event) {
-      if (confirm('Are you sure you want to remove "' + rule.name + '"?')) {
-        rules.splice(index, 1);
-      }
-      event.stopPropagation();
-    }, true));
-    
-    return $rule[0];
-  }));
+  }
+  displayRules();
   
   // make the rules container sortable
   $rules.sortable({
@@ -182,24 +180,25 @@ jQuery(function ($) {
   });
   $rules.disableSelection();
   
+  // add reload link
+  $(document.body).append($('<a href="javascript:">').text("Reset default settings").click(function () {
+    if (confirm("Are you sure you want to reset to the default rules?")) {
+      chrome.extension.sendRequest("reset", function (defaultRules) {
+        rules = defaultRules;
+        displayRules();
+      });
+    }
+  }));
+  
   // returns a function that saves that executes func and then saves the rule modifications
   function save (func, reload) {
     return function () {
       func.apply(this, arguments);
       localStorage.rules = JSON.stringify(rules);
       if (reload)
-        window.location.reload();
+        displayRules();
     };
   }
-  
-  // add reload link
-  $(document.body).append($('<a href="javascript:">').text("Reset default settings").click(function () {
-    if (confirm("Are you sure you want to reset to the default rules?")) {
-      chrome.extension.sendRequest("reset", function () {
-        window.location.reload();
-      });
-    }
-  }));
 });
 </script>
 <head>

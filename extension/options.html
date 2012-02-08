@@ -92,65 +92,47 @@ jQuery(function ($) {
     $rules.empty().append(rules.map(function (rule) {
        var index = count++;
       // create rule widget
-      var $label = $('<span>').addClass('name').append($('<span>').text(rule.name)),
+      var $name = $('<span>').addClass('name').append($('<span>').text(rule.name)),
           $regexp = $('<span>').addClass('regexp').append($('<span>').text(rule.regexp)),
           $replacement = $('<span>').addClass('replacement').append($('<span>').text(rule.replacement)),
           $remove = $('<span>').addClass('remove').append($('<a href="javascript:">').text('remove')),
           $rule = $('<div>').addClass('rule ui-widget-content')
                             .addClass(rule.enabled ? 'enabled' : 'disabled')
                             .data('index', index)
-                            .append($label, $regexp, $replacement, $remove);
+                            .append($name, $regexp, $replacement, $remove);
       
       // function to stop the current edit;
       var stopEdit;
+      // editor control
+      var $input = $('<textarea>');
       
       // toggle enabled on click
       $rule.click(save(function () {
-        if(!stopEdit) {
+        if (!stopEdit) {
           rule.enabled = !rule.enabled;
           $rule.toggleClass('enabled disabled');
         }
       }));
       
-      // label editing
-      $label.dblclick(function () {
-        var $input = $('<textarea>').val(rule.name);
-        $label.children().replaceWith($input);
-        
-        stopEdit = save(function () {
-          rule.name = $input.val();
-        }, true);
-        
-        $input.focus();
-        $input.blur(stopEdit);
-      });
-      
-      // regexp editing
-      $regexp.dblclick(function () {
-        var $input = $('<textarea>').val(rule.regexp);
-        $regexp.children().replaceWith($input);
-        
-        stopEdit = save(function () {
-          // todo: RegExp validation
-          rule.regexp = $input.val();
-        }, true);
-        
-        $input.focus();
-        $input.blur(stopEdit);
-      });
-      
-      // replacement editing
-      $replacement.dblclick(function () {
-        var $input = $('<textarea>').val(rule.replacement);
-        $replacement.children().replaceWith($input);
-        
-        stopEdit = save(function () {
-          // todo: validation (in case it is a function)
-          rule.replacement = $input.val();
-        }, true);
-        
-        $input.focus();
-        $input.blur(stopEdit);
+      // editors for name, regexp, and replacement
+      $.each({ name: $name, regexp: $regexp, replacement: $replacement}, function (property, $control) {
+        $control.dblclick(function () {
+          if (!stopEdit) {
+            // initialize the textarea control
+            $input.val(rule[property]);
+            $control.children().replaceWith($input);
+          
+            // set the function to stop the edit
+            stopEdit = save(function () {
+              rule[property] = $input.val();
+              stopEdit = null;
+            }, true);
+          
+            // focus the input control and stop the edit on blur
+            $input.focus();
+            $input.off('blur').blur(stopEdit);
+          }
+        });
       });
       
       // removing

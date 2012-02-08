@@ -131,6 +131,7 @@ jQuery(function ($) {
       
       stopEdit = save(function () {
         rule.regexp = $input.val();
+        // todo: RegExp validation
         $regexp.children().replaceWith($('<span>').text(rule.regexp));
         stopEdit = null;
       });
@@ -146,6 +147,7 @@ jQuery(function ($) {
       
       stopEdit = save(function () {
         rule.replacement = $input.val();
+        // todo: validation (in case it is a function)
         $replacement.children().replaceWith($('<span>').text(rule.replacement));
         stopEdit = null;
       });

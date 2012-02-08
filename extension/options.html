@@ -99,6 +99,7 @@ jQuery(function ($) {
         $remove = $('<span>').addClass('remove').append($('<a href="javascript:">').text('remove')),
         $rule = $('<div>').addClass('rule ui-widget-content')
                           .addClass(rule.enabled ? 'enabled' : 'disabled')
+                          .data('index', index)
                           .append($label, $regexp, $replacement, $remove);
     
     // toggle enabled on click
@@ -168,7 +169,17 @@ jQuery(function ($) {
   }));
   
   // make the rules container sortable
-  $rules.sortable();
+  $rules.sortable({
+    stop: save(function () {
+      var oldRules = new Array(rules.length);
+      for (var i = 0; i < rules.length; i++)
+        oldRules[i] = rules[i];
+      
+      $rules.children().each(function (index) {
+        rules[index] = oldRules[$.data(this, 'index')];
+      });
+    }, true)
+  });
   $rules.disableSelection();
   
   // returns a function that saves that executes func and then saves the rule modifications

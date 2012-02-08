@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<style>
+  body {
+    font: 14px/1.4 "Lucida Grande", "Lucida Sans Unicode", Lucida, Helvetica, Arial, sans-serif;
+  }
+  
+  tt {
+    font-size: .8em;
+  }
+  
+  #rules {
+    cursor: pointer !important;
+    max-width: 800px;
+  }
+  
+  .rule {
+    clear: both;
+    min-height: 2.5em;
+    margin: .2em 0;
+    padding: .5em;
+    width: 100%;
+    display: inline-block;
+    border: 1px solid #cccccc;
+    background: #f5f5f5;
+    border-radius: 3px;
+  }
+  
+  .rule:after {
+  	content: “.”;
+  	display: block;
+  	clear: both;
+  	visibility: hidden;
+  	line-height: 0;
+  	height: 0;
+  }
+  
+  .rule span, .rule tt {
+    float: left;
+    margin-right: 20px;
+    width: 200px;
+    max-height: 4em;
+    overflow: hidden;
+  }
+  
+  .rule .replacement {
+    max-width: 300px;
+  }
+  
+  .rule.enabled {
+    background-color: #eaf9e0;
+  }
+  
+  .rule.disabled {
+    background-color: #fafafa;
+  }
+  
+  .rule.enabled .name {
+    color: #6ba346;
+    font-weight: bold;
+  }
+  
+  .rule.disabled * {
+    color: #cccccc;
+    font-style: italic;
+  }
+</style>
+<script src="/jquery-1.7.1.min.js"></script>
+<script src="/jquery-ui-1.8.17.custom.min.js"></script>
+<script>
+jQuery(function ($) {
+  // obtain the rules
+  var rules = JSON.parse(localStorage.rules);
+  
+  // make a container for the rules
+  var $rules = $('#rules');
+
+  // add all rules to the container
+  $rules.append(Object.keys(rules).map(function (ruleName) {
+    // create rule widget
+    var rule = rules[ruleName],
+        $label = $('<span>').addClass('name').text(ruleName),
+        $regexp = $('<tt>').addClass('regexp').text(rule.regexp),
+        $replacement = $('<tt>').addClass('replacement').text(rule.replacement),
+        $rule = $('<div>').addClass('rule ui-widget-content')
+                          .addClass(rule.enabled ? 'enabled' : 'disabled')
+                          .append($label, $regexp, $replacement);
+    
+    // toggle enabled on click
+    $rule.click(save(function () {
+      rule.enabled = !rule.enabled;
+      $rule.toggleClass('enabled disabled');
+    }));
+    
+    return $rule[0];
+  }));
+  
+  // make the rules container sortable
+  $rules.sortable();
+  $rules.disableSelection();
+  
+  // returns a function that saves that executes func and then saves the rule modifications
+  function save (func) {
+    return function () {
+      func.apply(this, arguments);
+      localStorage.rules = JSON.stringify(rules);
+    };
+  }
+});
+</script>
+<head>
+  <title>xkcd #37 options</title>
+</head>
+<header>
+  <h1>xkcd #37 rules</h1>
+</header>
+<div id="rules" class="ui-widget">
+</div>
+</html>

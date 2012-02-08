@@ -1,0 +1,18 @@
+<script>
+  // load the default rules if the storage is empty
+  if (!localStorage.rules) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", chrome.extension.getURL("default_rules.json"), true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4)
+        localStorage.rules = xhr.responseText;
+    }
+    xhr.send();
+  }
+  
+  // send the rules if requested
+  chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
+    if (request === "rules")
+      sendResponse(JSON.parse(localStorage.rules));
+  });
+</script>

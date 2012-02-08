@@ -101,6 +101,7 @@ jQuery(function ($) {
       }
     }));
     
+    // label editing
     $label.dblclick(function () {
       var $input = $('<textarea>').val(rule.name);
       $label.children().replaceWith($input);
@@ -108,6 +109,34 @@ jQuery(function ($) {
       stopEdit = save(function () {
         rule.name = $input.val();
         $label.children().replaceWith($('<span>').text(rule.name));
+      });
+      
+      $input.focus();
+      $input.blur(stopEdit);
+    });
+    
+    // regexp editing
+    $regexp.dblclick(function () {
+      var $input = $('<textarea>').val(rule.regexp);
+      $regexp.children().replaceWith($input);
+      
+      stopEdit = save(function () {
+        rule.regexp = $input.val();
+        $regexp.children().replaceWith($('<span>').text(rule.regexp));
+      });
+      
+      $input.focus();
+      $input.blur(stopEdit);
+    });
+    
+    // replacement editing
+    $replacement.dblclick(function () {
+      var $input = $('<textarea>').val(rule.replacement);
+      $replacement.children().replaceWith($input);
+      
+      stopEdit = save(function () {
+        rule.replacement = $input.val();
+        $replacement.children().replaceWith($('<span>').text(rule.replacement));
       });
       
       $input.focus();

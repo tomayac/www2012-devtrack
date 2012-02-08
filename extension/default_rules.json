@@ -53,5 +53,12 @@
     "enabled": true,
     "regexp": "(\\w+)-(ass)(\\s+)(\\w+)",
     "replacement": "function(original, adjective, ass, space, noun) {\n\ttagger = new POSTagger();\n\t// is the first word really an adjective and the second really a noun?\n\tvar taggedWords = tagger.tag([adjective.toLowerCase(), noun]);\n\tif ((taggedWords[0][1].match(/^JJ$/)) &&\n\t\t(taggedWords[1][1].match(/^NN|^VBG$/))) {\n\t\t// then replace from \"smart-ass car\" to \"smart ass-car\"\n\t\treturn adjective + space + ass + '-' + noun;\n\t} else {\n\t\t// otherwise, don't change anything\n\t\treturn original;\n\t}\n}"
+  },
+    
+  {
+    "name": "add an Oxford comma to \"Huey, Dewey and Louie\"",
+    "enabled": true,
+    "regexp": "(\\w+),\\s+(\\w+)\\s+(and|or|nor)\\s+(\\w+)",
+    "replacement": "function(original, noun1, noun2, conjunction, noun3) {\n\tvar taggedWords = tagger.tag([noun1, noun2, noun3]);\n\tconsole.log(taggedWords);\n\t// noun, noun, and noun\n\tif ((taggedWords[0][1].match(/^NN|^VBG$/)) &&\n\t\t\t(taggedWords[1][1].match(/^NN|^VBG$/)) &&\n\t\t\t(taggedWords[2][1].match(/^NN|^VBG$/))) {\t\t\t\t\t\n\t\treturn noun1 + ', ' + noun2 + ', ' + conjunction + ' ' + noun3;\n\t// adjective, adjective, and adjective\t\n\t} else if ((taggedWords[0][1].match(/^JJ/)) &&\n\t\t\t\t\t\t (taggedWords[1][1].match(/^JJ/)) &&\n\t\t\t\t\t\t (taggedWords[2][1].match(/^JJ/))) {\n\t\treturn noun1 + ', ' + noun2 + ', ' + conjunction + ' ' + noun3;\n\t// verb, verb, and verb\t\n\t} else if ((taggedWords[0][1].match(/^VB/)) &&\n\t\t\t\t\t\t (taggedWords[1][1].match(/^VB/)) &&\n\t\t\t\t\t\t (taggedWords[2][1].match(/^VB/))) {\n\t\treturn noun1 + ', ' + noun2 + ', ' + conjunction + ' ' + noun3;\n\t} else {\n\t\t// otherwise, don't change anything\n\t\treturn original;\n\t}\n}"
   }
 ]

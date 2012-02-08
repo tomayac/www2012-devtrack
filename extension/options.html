@@ -109,6 +109,7 @@ jQuery(function ($) {
       stopEdit = save(function () {
         rule.name = $input.val();
         $label.children().replaceWith($('<span>').text(rule.name));
+        stopEdit = null;
       });
       
       $input.focus();
@@ -123,6 +124,7 @@ jQuery(function ($) {
       stopEdit = save(function () {
         rule.regexp = $input.val();
         $regexp.children().replaceWith($('<span>').text(rule.regexp));
+        stopEdit = null;
       });
       
       $input.focus();
@@ -137,6 +139,7 @@ jQuery(function ($) {
       stopEdit = save(function () {
         rule.replacement = $input.val();
         $replacement.children().replaceWith($('<span>').text(rule.replacement));
+        stopEdit = null;
       });
       
       $input.focus();

@@ -43,13 +43,26 @@
     overflow: hidden;
   }
   
-  .rule .name {
-    color: #1c94c4;
+  .rule .replacement {
+    max-width: 300px;
+  }
+  
+  .rule.enabled {
+    background-color: #eaf9e0;
+  }
+  
+  .rule.disabled {
+    background-color: #fafafa;
+  }
+  
+  .rule.enabled .name {
+    color: #6ba346;
     font-weight: bold;
   }
   
-  .rule .replacement {
-    max-width: 300px;
+  .rule.disabled * {
+    color: #cccccc;
+    font-style: italic;
   }
 </style>
 <script src="/jquery-1.7.1.min.js"></script>
@@ -63,18 +76,36 @@ jQuery(function ($) {
   var $rules = $('#rules');
 
   // add all rules to the container
-  for(var ruleName in rules) {
+  $rules.append(Object.keys(rules).map(function (ruleName) {
+    // create rule widget
     var rule = rules[ruleName],
         $label = $('<span>').addClass('name').text(ruleName),
         $regexp = $('<tt>').addClass('regexp').text(rule.regexp),
         $replacement = $('<tt>').addClass('replacement').text(rule.replacement),
-        $rule = $('<div>').addClass('rule ui-widget-content').append($label, $regexp, $replacement);
-    $rules.append($rule);
-  }
+        $rule = $('<div>').addClass('rule ui-widget-content')
+                          .addClass(rule.enabled ? 'enabled' : 'disabled')
+                          .append($label, $regexp, $replacement);
+    
+    // toggle enabled on click
+    $rule.click(save(function () {
+      rule.enabled = !rule.enabled;
+      $rule.toggleClass('enabled disabled');
+    }));
+    
+    return $rule[0];
+  }));
   
   // make the rules container sortable
   $rules.sortable();
   $rules.disableSelection();
+  
+  // returns a function that saves that executes func and then saves the rule modifications
+  function save (func) {
+    return function () {
+      func.apply(this, arguments);
+      localStorage.rules = JSON.stringify(rules);
+    };
+  }
 });
 </script>
 <head>
@@ -82,8 +113,7 @@ jQuery(function ($) {
 </head>
 <header>
   <h1>xkcd #37 rules</h1>
-  <div id="rules" class="ui-widget">
-  </div>
 </header>
-
+<div id="rules" class="ui-widget">
+</div>
 </html>

@@ -22,7 +22,6 @@
       // apply all rules to item
       return Object.keys(rules).reduce(function(item, ruleName) {
         var rule = rules[ruleName];
-        console.log(rule.regexp)
         return item.replace(rule.regexp, rule.replacement);
       }, item);
     }
@@ -59,11 +58,13 @@
     // parse rules
     for (var ruleName in rules) {
       var rule = rules[ruleName];
-      // instantiate regexp
-      rule.regexp = new RegExp(rule.regexp, "gi");
-      // evaluate the replacement function (if it is a function)
-      if (rule.replacement.match(/^\s*function/))
-        rule.replacement = eval('(' + rule.replacement + ')');
+      if(rule.enabled) {
+        // instantiate regexp
+        rule.regexp = new RegExp(rule.regexp, "gi");
+        // evaluate the replacement function (if it is a function)
+        if (rule.replacement.match(/^\s*function/))
+          rule.replacement = eval('(' + rule.replacement + ')');
+      }
     }
     init(rules);
   });

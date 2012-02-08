@@ -20,8 +20,7 @@
       }      
     } else {    
       // apply all rules to item
-      return Object.keys(rules).reduce(function(item, ruleName) {
-        var rule = rules[ruleName];
+      return rules.reduce(function(item, rule) {
         return item.replace(rule.regexp, rule.replacement);
       }, item);
     }
@@ -56,8 +55,7 @@
   // retrieve the rules, parse them, and init
   chrome.extension.sendRequest("rules", function (rules) {
     // parse rules
-    for (var ruleName in rules) {
-      var rule = rules[ruleName];
+    rules.forEach(function (rule) {
       if(rule.enabled) {
         // instantiate regexp
         rule.regexp = new RegExp(rule.regexp, "gi");
@@ -65,7 +63,7 @@
         if (rule.replacement.match(/^\s*function/))
           rule.replacement = eval('(' + rule.replacement + ')');
       }
-    }
+    });
     init(rules);
   });
 })();

@@ -10,5 +10,39 @@
   "extTitle": {
     "message": "xkcd #37",
     "description": "Extension description"
-  }  
+  },
+  "invalidRegExp": {
+    "message": "Invalid regular expression specified as rule.",
+    "description": "Displayed when a regular expression specified in a rule is invalid."
+  },
+  "invalidReplacement": {
+    "message": "Invalid function specified as replacement.",
+    "description": "Displayed when a replacement function has syntax errors."
+  },
+  "confirmRuleRemoval": {
+    "message": "Are you sure you want to remove the rule \"$RULE_NAME$\"?",
+    "description": "Displayed upon rule removal.",
+    "placeholders": {
+      "rule_name": {
+        "content": "$1",
+        "example": "replace three dots by an ellipsis"  
+      }
+    }
+  },
+  "restoreDefaultRules": {
+    "message": "Are you sure you want to reset to the default rules?",
+    "description": "Displayed upon rule reset."
+  },
+  "addNewRule": {
+    "message": "<img class=\"button\" src=\"add.png\" /> Add new rule"
+  },
+  "resetDefaultSettings": {
+    "message": "<img class=\"button\" src=\"reset.png\" /> Reset default rules"
+  },
+  "removeRule": {
+    "message": "remove"
+  },
+  "instructions": {
+    "message": "<ul><li><strong>Single-click</strong> a rule to <strong>enable</strong> or <strong>disable</strong> it.</li><li><strong>Double-click</strong> a rule name, regular expression, or replacement to <strong>edit</strong> it.</li><li><strong>Drag and drop</strong> rules to change their <strong>order</strong>.</li><li><strong>Awesomely</strong>, you can <strong>add</strong> new rules or <strong>reset</strong> the default rules.</li></ul>"
+  }        
 }

@@ -1,6 +1,6 @@
 {
   "name": "__MSG_extName__",
-  "version": "1.0.4",
+  "version": "1.0.0",
   "description": "__MSG_extDesc__",
   "icons": {
     "48": "icon_48.png",
@@ -13,9 +13,6 @@
 	      "http://*/*",
 	      "https://*/*",
 	      "file://*/*"
-      ],
-      "css": [
-        "main.css"
       ],
       "js": [
         "lexer.js",

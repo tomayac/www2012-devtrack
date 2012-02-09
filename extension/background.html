@@ -1,6 +1,6 @@
 <script>
   // reset to the default rules
-  function reset (callback) {
+  function reset(callback) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", chrome.extension.getURL("default_rules.json"), true);
     xhr.onreadystatechange = function() {
@@ -18,12 +18,14 @@
   }
   
   // listen for requests
-  chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
+  chrome.extension.onRequest.addListener(
+      function(request, sender, sendResponse) {
     // send the rules
-    if (request === "rules")
+    if (request === "rules") {
       sendResponse(JSON.parse(localStorage.rules));
     // reset the rules
-    if (request === "reset")
+    } else if (request === "reset") {
       reset(sendResponse);
+    }
   });
 </script>

@@ -1,27 +1,34 @@
 [
   {
-    "name": "replace three dots by an ellipsis",
+    "name": "turn “[adjective]-ass [noun]” into “[adjective] ass-[noun]”, aka. xkcd #37",
+    "enabled": true,
+    "regexp": "(\\w+)-(ass)(\\s+)(\\w+)",
+    "replacement": "function(original, adjective, ass, space, noun) {\n\ttagger = new POSTagger();\n\t// is the first word really an adjective and the second really a noun?\n\tvar taggedWords = tagger.tag([adjective.toLowerCase(), noun]);\n\tif ((taggedWords[0][1].match(/^JJ$/)) &&\n\t\t(taggedWords[1][1].match(/^NN|^VBG$/))) {\n\t\t// then replace from \"smart-ass car\" to \"smart ass-car\"\n\t\treturn adjective + space + ass + '-' + noun;\n\t} else {\n\t\t// otherwise, don't change anything\n\t\treturn original;\n\t}\n}"
+  },
+
+  {
+    "name": "correct three dots to an ellipsis",
     "enabled": true,
     "regexp": "\\.\\.\\.",
     "replacement": "\u2026"
   },
   
   {
-    "name": "avoid orphan 'a's",
+    "name": "avoid orphan ‘a’s",
     "enabled": true,
     "regexp": "(\\ba)\\s(\\w+\\b)",
     "replacement": "$1\u00A0$2"
   },
   
   {
-    "name": "don't break :-) :-( :-D :-| :-P :-p etc.",
+    "name": "don’t line-break emoticons",
     "enabled": true,
     "regexp": "([\\:|;])(\\-)([\\)|\\(|\\|D||p|P])",
     "replacement": "$1\uFEFF$2\uFEFF$3"
   },
   
   {
-    "name": "\"who to follow\" to \"whom to follow\"",
+    "name": "correct “who to follow” to “whom to follow”",
     "enabled": true,
     "regexp": "\\b(who)(\\s+to\\s+follow)\\b",
     "replacement": "$1m$2"
@@ -33,30 +40,30 @@
     "regexp": "\"([^\"]+)\"",
     "replacement": "\u201C$1\u201D"
   },
+
+  {
+    "name": "correct typewriter apostrophe to typographic apostrophe",
+    "enabled": true,
+    "regexp": "(\\w)'([st])",
+    "replacement": "$1’$2"
+  },
   
   {
-    "name": "replaces hyphens by figure dashes in phone numbers",
+    "name": "correct hyphens to figure dashes in phone numbers",
     "enabled": true,
     "regexp": "\\d+-(?:\\d+-)+\\d+",
     "replacement": "function(original) {\n\treturn original.replace(/-/g, '\\u2012');\n}"
   },
   
   {
-    "name": "numeric ranges should be separated by an en dash instead of a hyphen",
+    "name": "separate numeric ranges by an en dash instead of a hyphen",
     "enabled": true,
     "regexp": "(\\d+)-(\\d+)",
     "replacement": "$1\u2013$2"
   },
-  
-  {
-    "name": "turn \"[adjective]-ass [noun]\" into \"[adjective] ass-[noun]\"",
-    "enabled": true,
-    "regexp": "(\\w+)-(ass)(\\s+)(\\w+)",
-    "replacement": "function(original, adjective, ass, space, noun) {\n\ttagger = new POSTagger();\n\t// is the first word really an adjective and the second really a noun?\n\tvar taggedWords = tagger.tag([adjective.toLowerCase(), noun]);\n\tif ((taggedWords[0][1].match(/^JJ$/)) &&\n\t\t(taggedWords[1][1].match(/^NN|^VBG$/))) {\n\t\t// then replace from \"smart-ass car\" to \"smart ass-car\"\n\t\treturn adjective + space + ass + '-' + noun;\n\t} else {\n\t\t// otherwise, don't change anything\n\t\treturn original;\n\t}\n}"
-  },
     
   {
-    "name": "add an Oxford comma to \"Huey, Dewey and Louie\"",
+    "name": "add an Oxford comma to “Huey, Dewey and Louie”",
     "enabled": true,
     "regexp": "(\\w+),\\s+(\\w+)\\s+(and|or|nor)\\s+(\\w+)",
     "replacement": "function(original, noun1, noun2, conjunction, noun3) {\n\ttagger = new POSTagger();\n\tvar taggedWords = tagger.tag([noun1, noun2, noun3]);\n\tconsole.log(taggedWords);\n\t// noun, noun, and noun\n\tif ((taggedWords[0][1].match(/^NN|^VBG$/)) &&\n\t\t\t(taggedWords[1][1].match(/^NN|^VBG$/)) &&\n\t\t\t(taggedWords[2][1].match(/^NN|^VBG$/))) {\t\t\t\t\t\n\t\treturn noun1 + ', ' + noun2 + ', ' + conjunction + ' ' + noun3;\n\t// adjective, adjective, and adjective\t\n\t} else if ((taggedWords[0][1].match(/^JJ/)) &&\n\t\t\t\t\t\t (taggedWords[1][1].match(/^JJ/)) &&\n\t\t\t\t\t\t (taggedWords[2][1].match(/^JJ/))) {\n\t\treturn noun1 + ', ' + noun2 + ', ' + conjunction + ' ' + noun3;\n\t// verb, verb, and verb\t\n\t} else if ((taggedWords[0][1].match(/^VB/)) &&\n\t\t\t\t\t\t (taggedWords[1][1].match(/^VB/)) &&\n\t\t\t\t\t\t (taggedWords[2][1].match(/^VB/))) {\n\t\treturn noun1 + ', ' + noun2 + ', ' + conjunction + ' ' + noun3;\n\t} else {\n\t\t// otherwise, don't change anything\n\t\treturn original;\n\t}\n}"

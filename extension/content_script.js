@@ -53,15 +53,24 @@
   };
   
   // retrieve the rules, parse them, and init
-  chrome.extension.sendRequest("rules", function (rules) {
+  chrome.extension.sendRequest("rules", function(rules) {
     // parse rules
-    rules.forEach(function (rule) {
-      if(rule.enabled) {
+    rules.forEach(function(rule) {
+      if (rule.enabled) {
         // instantiate regexp
-        rule.regexp = new RegExp(rule.regexp, "gi");
-        // evaluate the replacement function (if it is a function)
-        if (rule.replacement.match(/^\s*function/))
-          rule.replacement = eval('(' + rule.replacement + ')');
+        try {
+          rule.regexp = new RegExp(rule.regexp, "gi");
+          // evaluate the replacement function (if it is a function)
+          if (rule.replacement.match(/^\s*function/)) {
+            try {
+              rule.replacement = eval('(' + rule.replacement + ')');
+            } catch(e) {
+              alert(chrome.i18n.getMessage(invalidReplacement));
+            }
+          }
+        } catch(e) {
+          alert(chrome.i18n.getMessage(invalidRegExp));
+        }    
       }
     });
     init(rules);

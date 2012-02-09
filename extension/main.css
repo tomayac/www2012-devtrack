@@ -50,7 +50,7 @@ img.button {
 }
 
 .rule .remove {
-  width: 50px;
+  width: 60px;
   float: right;
 }
 
@@ -74,4 +74,8 @@ img.button {
 .rule.disabled * {
   color: #cccccc;
   font-style: italic;
+}
+
+.rule span.error {
+  background-color: red;
 }

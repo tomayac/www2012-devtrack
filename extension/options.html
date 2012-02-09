@@ -21,15 +21,35 @@
         var count = 0;
         $rules.empty().append(rules.map(function(rule) {
            var index = count++;
+          
+          // check if the regexp is valid
+          var error = false;
+          try {
+            new RegExp(rule.regexp, "gi");                      
+          } catch(e) {
+            alert(chrome.i18n.getMessage('invalidRegExp'));
+            error = true;
+          }
+          // check if the replacement function is valid
+          if (rule.replacement.match(/^\s*function/)) {
+            try {
+              eval('(' + rule.replacement + ')');
+            } catch(e) {
+              alert(chrome.i18n.getMessage('invalidReplacement'));
+              error = true;
+            }
+          }
+          
           // create rule widget
           var $name = $('<span>').addClass('name').append($('<span>').
                   text(rule.name)),
-              $regexp = $('<span>').addClass('regexp').append($('<span>')
+              $regexp = $('<span>').addClass('regexp').append(
+                  (error ? $('<span>').addClass('error') : $('<span>'))
                   .text(rule.regexp)),
               $replacement = $('<span>').addClass('replacement')
                   .append($('<span>').text(rule.replacement)),
               $remove = $('<span>').addClass('remove')
-                  .append($('<a href="javascript:">')
+                  .append($('<button>')
                   .text(chrome.i18n.getMessage('removeRule'))),
               $rule = $('<div>').addClass('rule ui-widget-content')
                                 .addClass(rule.enabled ? 'enabled' : 'disabled')
@@ -71,7 +91,29 @@
           
                   // focus the input control and stop the edit on blur
                   $input.focus();
-                  $input.off('blur').blur(stopEdit);
+                  
+                  var sanityCheck = function() {
+                    if (property === 'regexp') {
+                      try {
+                        new RegExp($input.val(), "gi");                      
+                      } catch(e) {
+                        alert(chrome.i18n.getMessage('invalidRegExp'));
+                        return;
+                      }
+                    } else if (property === 'replacement') {
+                      if ($input.val().match(/^\s*function/)) {
+                        try {
+                          eval('(' + $input.val() + ')');
+                        } catch(e) {
+                          alert(chrome.i18n.getMessage('invalidReplacement'));
+                          return;
+                        }
+                      }
+                    }
+                    stopEdit();                    
+                  }
+                  
+                  $input.off('blur').blur(sanityCheck);
                 }
               });
           });

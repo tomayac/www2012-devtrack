@@ -65,11 +65,11 @@
             try {
               rule.replacement = eval('(' + rule.replacement + ')');
             } catch(e) {
-              alert(chrome.i18n.getMessage(invalidReplacement));
+              alert(chrome.i18n.getMessage('invalidReplacement'));
             }
           }
         } catch(e) {
-          alert(chrome.i18n.getMessage(invalidRegExp));
+          alert(chrome.i18n.getMessage('invalidRegExp'));
         }    
       }
     });

@@ -43,6 +43,9 @@
     "message": "remove"
   },
   "instructions": {
-    "message": "<ul><li><strong>Single-click</strong> a rule to <strong>enable</strong> or <strong>disable</strong> it.</li><li><strong>Double-click</strong> a rule name, regular expression, or replacement to <strong>edit</strong> it.</li><li><strong>Drag and drop</strong> rules to change their <strong>order</strong>.</li><li><strong>Awesomely</strong>, you can <strong>add</strong> new rules or <strong>reset</strong> the default rules.</li></ul>"
+    "message": "<ul><li><strong>Single-click</strong> a rule to <strong>enable</strong> or <strong>disable</strong> it.</li><li><strong>Double-click</strong> a rule name, regular expression, or replacement to <strong>edit</strong> it.</li><li><strong>Drag and drop</strong> rules to change their <strong>order</strong>.</li><li><strong>Awesomely</strong>, you can <strong>add</strong> or <strong>remove</strong> rules.</li><li><strong>Thank God</strong> there is a <strong>reset</strong> button for the default rules.</li></ul>"
+  },
+  "madeInEurope": {
+    "message": "Hand-made in Europe with love by <a href=\"http://twitter.com/RubenVerborgh\">@RubenVerborgh</a> and <a href=\"http://twitter.com/tomayac\">@tomayac</a>."
   }        
 }

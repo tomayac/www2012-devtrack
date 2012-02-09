@@ -1,0 +1,50 @@
+{
+  "extName": {
+    "message": "xkcd #37",
+    "description": "Extension name"
+  },
+  "extDesc": {
+    "message": "Diese Extension implementiert xkcd #37. Jepp, ganz in echt.",
+    "description": "Extension description"
+  },
+  "extTitle": {
+    "message": "xkcd #37",
+    "description": "Extension description"
+  },
+  "invalidRegExp": {
+    "message": "Ungültiger regulärer Ausdruck als Regel angegeben.",
+    "description": "Displayed when a regular expression specified in a rule is invalid."
+  },
+  "invalidReplacement": {
+    "message": "Ungültige Funktion als Ersetzung angegeben.",
+    "description": "Displayed when a replacement function has syntax errors."
+  },
+  "confirmRuleRemoval": {
+    "message": "Die Regel \"$RULE_NAME$\" wirklich löschen?",
+    "description": "Displayed upon rule removal.",
+    "placeholders": {
+      "rule_name": {
+        "content": "$1"
+      }
+    }
+  },
+  "restoreDefaultRules": {
+    "message": "Wirklich die Default-Regeln wiederherstellen?",
+    "description": "Displayed upon rule reset."
+  },
+  "addNewRule": {
+    "message": "<img class=\"button\" src=\"add.png\" /> Neue Regel hinzufügen"
+  },
+  "resetDefaultSettings": {
+    "message": "<img class=\"button\" src=\"reset.png\" /> Default-Regeln wiederherstellen"
+  },
+  "removeRule": {
+    "message": "löschen"
+  },
+  "instructions": {
+    "message": "<ul><li><strong>Einfach-Klick</strong> auf eine Regel um sie zu <strong>aktivieren</strong> oder zu <strong>deaktivieren</strong>.</li><li><strong>Doppel-Klick</strong> auf einen Regelnamen, regulären Ausdruck, oder eine Ersetzung um diesen oder diese zu <strong>ändern</strong>.</li><li><strong>Drag and drop</strong> um die Regeln neu zu <strong>ordnen</strong>.</li><li><strong>Genialerweise</strong> können Regeln <strong>hinzugefügt</strong> oder <strong>gelöscht</strong> werden.</li><li><strong>Gott sei Dank</strong> gibt es einen <strong>Reset</strong> Knopf für die Default-Regeln.</li></ul>"
+  },
+  "madeInEurope": {
+    "message": "In liebevoller Handarbeit hergestellt in Europa von <a href=\"http://twitter.com/RubenVerborgh\">@RubenVerborgh</a> und <a href=\"http://twitter.com/tomayac\">@tomayac</a>."
+  }                  
+}

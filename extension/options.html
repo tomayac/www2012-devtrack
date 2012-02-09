@@ -190,6 +190,7 @@
     <button style="margin-left:2em;" id="reset" href="javascript:"></button>
     <div id="rules" class="ui-widget">
     </div>
+    <p id="madeBy"></p> 
     <script>
       document.getElementById('add').innerHTML =
           chrome.i18n.getMessage('addNewRule');
@@ -197,6 +198,8 @@
           chrome.i18n.getMessage('resetDefaultSettings');
       document.getElementById('instructions').innerHTML =
           chrome.i18n.getMessage('instructions');          
+      document.getElementById('madeBy').innerHTML =
+          chrome.i18n.getMessage('madeInEurope');                    
     </script>
   </body>  
 </html>

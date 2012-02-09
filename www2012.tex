@@ -72,7 +72,7 @@ framexbottommargin=-1em,
 
 \begin{document}
 
-\title{Fixing the Web one page at a time,\\ or actually implementing xkcd \#37}
+\title{Fixing the Web one page at a~time,\\ or actually implementing xkcd \#37}
 
 \numberofauthors{2}
 \author{
@@ -122,10 +122,11 @@ Using client-side work-arounds, the Web can actually be fixed one page at a~time
 In this paper, we show how using browser extensions, part of speech tagging,
 and JavaScript DOM event listeners,
 the Web can be made a~better place.
-On a related note, this is quite a sweet ass-abstract for a scientific paper, dude! \linebreak
+On a~related note, this is quite a~sweet ass-abstract for a~scientific paper, dude! \linebreak
 
-\section{Typographic Annoyances}
-In this Section, we introduce common typographic annoyances with the objective of fixing them on the client-side.
+\section{Motivation}
+\subsection{Typographic Annoyances}
+In this Subsection, we introduce common typographic annoyances with the objective of fixing them on the client-side.
 
 \textbf{Ellipsis character:} Ellipsis (plural ellipses; from the Ancient Greek:
 \greektext élleiyis, % ἔλλειψις  % !!!!!!!!! IMPORTANT !!!!!!!!!
@@ -139,7 +140,7 @@ by three full stops in a~row due to the lack of a~designated key on standard key
 
 \textbf{Oxford comma:} The Oxford comma is the comma used immediately before a~coordinating conjunction (usually ``and'' or ``or'',
 and sometimes ``nor'') preceding the final item in a~list of three or more items,
-e.g., ``Portugal, Spain, and France''.
+\emph{e.g.}, ``Portugal, Spain, and France''.
 Opinions vary among writers and editors on the usage or avoidance of the serial comma.
 In American English, the serial comma is standard usage in non-journalistic writing that follows the Chicago Manual of Style.
 Journalists, however, usually follow the AP Stylebook, which advises against it,
@@ -174,13 +175,13 @@ Commonly referred to as a~typewriter or programmer's quote, it does not indicate
 Therefore, ``curved'' quotes have been introduced as they are able to make this distinction.
 A similar situation is given for typewriter apostrophes \textquotesingle, which should be replaced by typographic apostrophes ' like in ``don't'', or ``Randall Munroe's''.
 
-\section{Further Use Cases}
-In this Section, we present further use cases where client-side fixing of Web pages can be considered useful.
+\subsection{Further Use Cases}
+In this Subsection, we present further use cases where client-side fixing of Web pages can be considered useful.
 
 \textbf{xkcd \#37:} The Web comic xkcd in its episode \#37 proposes the mental experiment of shifting the hyphen in word combinations of the form \mbox{``[adjective]-ass [noun]''} one word to the right,
 so that the resulting word combination reads \mbox{``[adjective] ass-[noun]''}.
 
-\textbf{Emoticons:} An emoticon is a pictorial representation of a~facial expression using punctuation marks and letters,
+\textbf{Emoticons:} An emoticon is a~pictorial representation of a~facial expression using punctuation marks and letters,
 usually written to express a~person's mood.
 Emoticons are often used to alert a~responder to the tenor or temper of a~statement,
 and can change and improve interpretation of plain text.
@@ -189,32 +190,69 @@ Not emoticon-aware software unfortunately still has the tendency to break lines 
 
 \section{Implementation}
 In this Section, we detail the implementation and underlying technologies used.
-
-\subsection{Part-of-Speech Tagging}
-A simple definition of part-of-speech tagging (POS) is the process of identifying words in a text as nouns, verbs, adjectives, adverbs, etc., based on both their definition, as well as their context.
-Our processing chain supports part-of-speech tagging via an open source JavaScript library called jspos\footnote{\url{http://code.google.com/p/jspos/}},
-eventually based on Eric Brill's POS tagger~\cite{brill1992simple}.
+As motivated before, the only way to address typographic annoyances and advanced use cases is on the client-side.
+We therefore introduce browser extensions.
 
 \subsection{Browser Extensions}
 Browser extensions are small software programs that users can install to enrich their browsing experience with Web browsers.
-They are written using a combination of standard Web technologies, such as HTML, JavaScript, and CSS.
+They are written using a~combination of standard Web technologies, such as HTML, JavaScript, and CSS.
 There are several types of extensions; for this paper we focus on extensions based on so-called \emph{content scripts}.
 Content scripts are JavaScript programs that run in the context of Web pages via dynamic code injection.
 By using the standard Document Object Model (DOM), they can modify details of Web pages.
+In the concrete case, we based our implementation on Google Chrome browser extensions\footnote{\url{http://code.google.com/chrome/extensions/docs.html}}.
 
-\subsection{Using Google Spreadsheets with JSON-P}
-% Responsible: Tom
-\cite{jsonp2009}
+\subsection{Part-of-Speech Tagging}
+Simple typographic annoyances, like triple full stops instead of ellipses, can be easily fixed via regular expressions (here using JavaScript syntax):
 
-\subsection{Getting \todo{Manipulating?} All Text Nodes}
-\label{subsec:textnodes}
-% Responsible: Tom
-http://jsperf.com/
+\noindent \texttt{"Lorem ipsum...".replace(/\textbackslash.\textbackslash.\textbackslash./g, "\ldots");}
+
+More complicated annoyances, like omission of the Oxford comma, not to mention xkcd \#37, however,
+require basic text understanding in order to only be fixed where adequate, \emph{i.e.}, 
+in lists of three or more items.
+On a~similar note, it would harm the rules of xkcd \#37 to replace ``A bad-ass is afraid, but does it anyway'' by ``A bad ass-is afraid, but does it anyway'', as ``is'' is not a~noun.
+
+A simple definition of part-of-speech tagging (POS) is the process of identifying words in a~text as nouns, verbs, adjectives, adverbs, etc., based on both their definition, as well as their context.
+Our processing chain supports part-of-speech tagging for the English language via an open source JavaScript library called jspos\footnote{\url{http://code.google.com/p/jspos/}},
+eventually based on Eric Brill's POS tagger~\cite{brill1992simple}.
+The algorithm behind the Brill tagger assigns a~tag to each word and later changes those tags using a~set of predefined rules.
+If a~word is known, the algorithm assigns the most frequent tag.
+Else, it first naively assigns the tag ``noun'' to the unknown word,
+and then applies the rules over and over, thereby changing incorrect tags,
+until a~quite high accuracy is achieved.
+
+In order for part-of-speech tagging to work, text fragments must be obtained from Web pages.
+In the following, we discuss techniques for obtaining text from Web pages.
+
+\begin{figure}[t!]
+\begin{center}
+   \includegraphics[width=1\linewidth]{./jsPerf.png}
+\end{center}
+   \caption{Comparing three different methods of obtaining all text nodes of a~Web page. The winner is TreeWalker.}
+\label{fig:jsPerf}
+\end{figure}
+
+\subsection{Obtaining Text from Web Pages}
+We start this Subsection with a~clarification of what we mean when we say \emph{text}.
+We are not talking about the HTML source code of a~Web page,
+but about the (in modern Web applications potentially dynamically generated) value of all nodes
+of the DOM tree with a~JavaScript \texttt{nodeType} of integer $3$,
+which corresponds to \texttt{Node.TEXT\_NODE}.
+A naive approach would be to use \texttt{document.body.textContent}, however,
+this method neglects the context of the origin of the text.
+It would no longer be clear what text fragments belong together, \emph{e.g.}, to the same paragraph.
+Instead, per-element text node analysis is necessary.
+There are three methods for achieving this:
+(i) selecting all text nodes via XPath,
+(ii) recursively walking down the DOM tree,
+(iii) using the little-known DOM TreeWalker~\cite{treewalker}.
+We have performed JavaScript performance tests in order to determine the fastest variant.
+The results of our tests can be seen in \autoref{fig:jsPerf}.
+The DOM TreeWalker clearly outperforms all other methods.
+New results are dynamically added to the existing results by running the tests on a~dedicated \url{jsPerf.com} Web page\footnote{\url{http://jsperf.com/obtain-all-text-nodes-of-a-web-page}}.
 
 \subsection{Listening on DOM Changes}
-% Responsible: Ruben
-The functionality so far only enables us to fix the static Web, \emph{i.e.}, Web pages whose content remains unchanged during their entire lifetime.
-However, an important share of modern Web pages makes use of dynamically retrieved information, for example with AJAX technologies.
+The functionality so far only enables us to fix the static Web, \emph{i.e.}, Web pages whose content remains unchanged during a~browser session.
+However, an important share of modern Web pages makes use of dynamically retrieved information, for example with Ajax technologies.
 This means that a~single text node manipulation cycle after the initial page has been loaded is insufficient.
 
 Instead, we have to dynamically react on page changes by listening to DOM events~\cite{w3cevents2011}.
@@ -227,10 +265,7 @@ While it resides in the \Verb!head! element and thus out of the visible part of 
 browsers usually display the title in a~prominent place.
 For that reason, title changes are separately monitored by the \Verb!DOMSubtreeModified! event.
 
-\subsection{Security Considerations}
-% Responsible: Ruben
-
-\begin{lstlisting}[caption=Pseudocode illustrating the browser extension's functionality., label=code:xkcd, float=h, escapechar=§, belowskip=-1em]
+\begin{lstlisting}[caption=Pseudocode for the browser extension's logic., label=code:xkcd, float=h]
 // Initial processing
 for all text nodes of DOM tree as text node
   processRules(text node)
@@ -256,8 +291,27 @@ function processRules(text node)
 end function  
 \end{lstlisting} 
 
+With that, we have all the building blocks in place to fix the Web, one page at a~time.
+The complete pseudocode for the implemented browser extension is given in \autoref{code:xkcd}.
+
+\begin{figure}[h!]
+\vspace{+10pt}
+\begin{center}
+   \includegraphics[width=1\linewidth]{./editor.png}
+\end{center}
+   \caption{Rules editor of the xkcd \#37 extension.}
+\label{fig:editor}
+\end{figure}
+
+\section{Conclusion}
+While the extension itself is ideally directly tested in a~browser, \autoref{fig:editor} shows the rules editor,
+which allows for new rules to be added, undesired rules to be deactivated, or existing rules to be modified.
+We have published our extension on the Chrome Web Store\footnote{\todo{url}} and invite the reader to test it thoroughly.
+As a teaser, it is a very satisfying dumb ass-experience to read the Wikipedia page on the Oxford comma.
+Fun is to be had.
+
 \section{Acknowledgments}
-None. The world is to acknowledge us for this work.
+We thank Christopher Blum (@ChristopherBlum) and Malte Ubl (@cramforce) for pointing us to the DOM TreeWalker.
 
 % back to normal size Computer Modern for URLs in bibliography
 \let\ttdefault\oldttdefault

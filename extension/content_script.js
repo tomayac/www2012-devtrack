@@ -1,20 +1,21 @@
 (function() {
   // gets all text nodes from the DOM tree starting from a given root
   var getAllTextNodes = function(root) {
-    return document.evaluate(
-        './/text()[normalize-space(.) != ""]',
-        root,
-        null,
-        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-        null);    
+    var walker = document.createTreeWalker(
+        root, NodeFilter.SHOW_TEXT, null, false);
+    var textNodes = [];
+    while (walker.nextNode()) {
+      textNodes.push(walker.currentNode);
+    }
+    return textNodes;    
   };
   
   // applies all rules to the given text or XPathResult
   var applyRules = function(rules, item) {
     // apply rules to each item of the XPathResult
-    if (item instanceof XPathResult) {
-      for (var i = 0, l = item.snapshotLength; i < l; i++) {
-        var textNode = item.snapshotItem(i);
+    if (Array.isArray(item)) {
+      for (var i = 0, l = item.length; i < l; i++) {
+        var textNode = item[i];
         // call yourself recursively
         textNode.data = applyRules(rules, textNode.data);
       }      

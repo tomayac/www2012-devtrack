@@ -17,7 +17,12 @@
       for (var i = 0, l = item.length; i < l; i++) {
         var textNode = item[i];
         // call yourself recursively
-        textNode.data = applyRules(rules, textNode.data);
+        var parentNodeName = textNode.parentNode.nodeName;
+        if ((parentNodeName !== 'TEXTAREA') &&
+            (parentNodeName !== 'INPUT') &&
+            (parentNodeName !== 'SCRIPT')) {        
+          textNode.textContent = applyRules(rules, textNode.textContent);
+        }
       }      
     } else {    
       // apply all rules to item
@@ -40,7 +45,12 @@
 
     // event listener to react on dynamic DOM node textual modifications
     document.body.addEventListener('DOMCharacterDataModified', function(e) {
-      e.target.data = applyRules(rules, e.target.data);
+      var parentNodeName = e.target.parentNode.nodeName;
+      if ((parentNodeName !== 'TEXTAREA') &&
+          (parentNodeName !== 'INPUT') &&
+          (parentNodeName !== 'SCRIPT')) {        
+        e.target.textContent = applyRules(rules, e.target.textContent);
+      }
     }, false);
 
     // event listener to react on dynmaic title changes

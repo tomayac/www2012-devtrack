@@ -5,24 +5,24 @@
         root, NodeFilter.SHOW_TEXT, null, false);
     var textNodes = [];
     while (walker.nextNode()) {
-      textNodes.push(walker.currentNode);
+      var parentNodeName = walker.currentNode.parentNode.nodeName;
+      if ((parentNodeName !== 'TEXTAREA') &&
+          (parentNodeName !== 'INPUT') &&
+          (parentNodeName !== 'SCRIPT')) {              
+        textNodes.push(walker.currentNode);
+      }
     }
     return textNodes;    
   };
   
-  // applies all rules to the given text or XPathResult
+  // applies all rules to the given text
   var applyRules = function(rules, item) {
-    // apply rules to each item of the XPathResult
+    // apply rules to each item
     if (Array.isArray(item)) {
       for (var i = 0, l = item.length; i < l; i++) {
         var textNode = item[i];
         // call yourself recursively
-        var parentNodeName = textNode.parentNode.nodeName;
-        if ((parentNodeName !== 'TEXTAREA') &&
-            (parentNodeName !== 'INPUT') &&
-            (parentNodeName !== 'SCRIPT')) {        
-          textNode.textContent = applyRules(rules, textNode.textContent);
-        }
+        textNode.textContent = applyRules(rules, textNode.textContent);
       }      
     } else {    
       // apply all rules to item

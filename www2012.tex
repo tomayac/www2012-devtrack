@@ -49,11 +49,11 @@
 framexbottommargin=-1em,
         basicstyle=\ttfamily\listingsize\selectfont}
 
-% use Courier from this point onward
+% use Courier from this point onward, except for URLs
 \let\oldttdefault\ttdefault
 \renewcommand{\ttdefault}{pcr}
 \let\oldurl\url
-\renewcommand{\url}[1]{\inlinelistingsize\oldurl{#1}}
+\renewcommand{\UrlFont}{\fontfamily{\oldttdefault}\selectfont}
 
 % linewrap symbol
 \definecolor{grey}{RGB}{130,130,130}
@@ -72,7 +72,7 @@ framexbottommargin=-1em,
 
 \begin{document}
 
-\title{Fixing the Web one page at a~time,\\ or actually implementing xkcd \#37}
+\title{Fixing the Web One Page at a~Time,\\ or Actually Implementing xkcd \#37}
 
 \numberofauthors{2}
 \author{
@@ -107,6 +107,7 @@ Ruben Verborgh and Rik Van de Walle\\
 
 %\keywords{}
 
+\vspace{-1em}
 \section{Introduction}
 Albeit famous exceptions exist in form of Wikis,
 the Web today is still mostly a~read-only experience.
@@ -199,7 +200,7 @@ They are written using a~combination of standard Web technologies, such as HTML,
 There are several types of extensions; for this paper we focus on extensions based on so-called \emph{content scripts}.
 Content scripts are JavaScript programs that run in the context of Web pages via dynamic code injection.
 By using the standard Document Object Model (DOM), they can modify details of Web pages.
-In the concrete case, we based our implementation on Google Chrome browser extensions\footnote{\url{http://code.google.com/chrome/extensions/docs.html}},
+In the concrete case, we based our implementation on Google Chrome browser extensions\footnotemark[1],
 albeit given the lightweight architecture of browser extensions
 with the common building blocks JavaScript, HTML, and CSS,
 porting the extension to other browsers is possible.
@@ -213,6 +214,10 @@ More complicated annoyances, like omission of the Oxford comma, not to mention x
 require basic text understanding in order to only be fixed where adequate, \emph{i.e.}, 
 in lists of three or more items.
 On a~similar note, it would harm the rules of xkcd \#37 to replace ``A~bad-ass is afraid, but does it anyway'' by ``A~bad ass-is afraid, but does it anyway'', as ``is'' is not a~noun.
+
+% move footnote to next column
+\addtocounter{footnote}{1}
+\footnotetext{\url{http://code.google.com/chrome/extensions/}\vspace{-.7em}}
 
 A~simple definition of part-of-speech tagging (POS) is the process of identifying words in a~text as nouns, verbs, adjectives, adverbs, etc., based on both their definition, as well as their context.
 Our processing chain supports part-of-speech tagging for the English language via an open source JavaScript library called jspos\footnote{\url{http://code.google.com/p/jspos/}},
@@ -245,13 +250,14 @@ this method neglects the context of the origin of the text.
 It would no longer be clear what text fragments belong together, \emph{e.g.}, to the same paragraph.
 Instead, per-element text node analysis is necessary.
 There are three methods for achieving this:
-(i) selecting all text nodes via XPath,
-(ii) recursively walking down the DOM tree,
-(iii) using the little-known DOM TreeWalker~\cite{treewalker}.
-We have performed JavaScript performance tests in order to determine the fastest variant.
+(i)~selecting all text nodes via XPath,
+\linebreak
+(ii)~recursively walking down the DOM tree,
+(iii)~using the little-known DOM TreeWalker~\cite{treewalker}.
+We have performed Java\-Script performance tests in order to determine the fastest variant.
 The results of our tests can be seen in \autoref{fig:jsPerf}.
 The DOM TreeWalker clearly outperforms all other methods.
-New results are dynamically added to the existing results by running the tests on a~dedicated \url{jsPerf.com} Web page\footnote{\url{http://jsperf.com/obtain-all-text-nodes-of-a-web-page}}.
+New results are dynamically added to the existing results by running the tests on a~dedicated \url{jsPerf.com} page\footnotemark[3].
 
 \subsection{Listening on DOM Changes}
 The functionality so far only enables us to fix the static Web, \emph{i.e.}, Web pages whose content remains unchanged during a~browser session.
@@ -270,19 +276,19 @@ For that reason, title changes are separately monitored by the \Verb!DOMSubtreeM
 The complete pseudocode for the implemented browser extension is given in \autoref{code:xkcd}.
 
 \begin{lstlisting}[caption=Pseudocode for the browser extension's logic., label=code:xkcd, float=h]
-// Initial processing
+§\bfseries // Initial processing §
 for all text nodes of DOM tree as text node
   processRules(text node)
 end for  
 
-// DOMNodeInserted Event Listener
+§\bfseries // DOMNodeInserted Event Listener §
 on DOM node inserted (new node)
   for all text nodes of new node as text node
     processRules(text node)
   end for  
 end on DOM node inserted
 
-// Helper function
+§\bfseries // Helper function §
 function processRules(text node)
   for all rules as rule
     if rule is regular expression rule
@@ -318,19 +324,19 @@ Accessibility of Web pages can be improved by a~future version of the extension,
 by annotating emoticons semantically.
 A~further use case could be autocorrecting user input.
 
+% move footnote to next column
+\addtocounter{footnote}{1}
+\footnotetext{\url{http://jsperf.com/obtain-all-text-nodes-of-a-web-page}\vspace{-.7em}}
+
 \section{Conclusion}
-While the extension itself is ideally directly tested in a~browser, \autoref{fig:editor} shows the rules editor,
+While the extension itself is ideally directly tested in \linebreak a~browser, \autoref{fig:editor} shows the rules editor,
 which allows for new rules to be added, undesired rules to be deactivated, or existing rules to be modified.
 We have published our extension on the Chrome Web Store\footnote{\url{http://bit.ly/xkcd37}} and invite the reader to test it thoroughly.
 As a~teaser, it is a~very satisfying dumb ass-experience to read the Wikipedia page on the Oxford comma.
 Fun is to be had.
 
 \section{Acknowledgments}
-We thank Christopher Blum (@ChristopherBlum) and Malte Ubl (@cramforce) for pointing us to the DOM TreeWalker.
-
-% back to normal size Computer Modern for URLs in bibliography
-\let\ttdefault\oldttdefault
-\let\url\oldurl
+We thank Christopher Blum ({\UrlFont @ChristopherBlum}) and\linebreak Malte Ubl ({\UrlFont @cramforce}) for pointing us to DOM TreeWalker.
 
 \bibliographystyle{abbrv}
 \bibliography{www2012}

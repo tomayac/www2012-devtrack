@@ -1,4 +1,5 @@
 (function() {
+  var BLACKLIST = ['SCRIPT', 'TEXTAREA', 'INPUT', 'CODE', 'PRE'];
   // gets all text nodes from the DOM tree starting from a given root
   var getAllTextNodes = function(root) {
     var walker = document.createTreeWalker(
@@ -6,9 +7,7 @@
     var textNodes = [];
     while (walker.nextNode()) {
       var parentNodeName = walker.currentNode.parentNode.nodeName;
-      if ((parentNodeName !== 'TEXTAREA') &&
-          (parentNodeName !== 'INPUT') &&
-          (parentNodeName !== 'SCRIPT')) {              
+      if (BLACKLIST.indexOf(parentNodeName) === -1) {
         textNodes.push(walker.currentNode);
       }
     }
@@ -46,9 +45,7 @@
     // event listener to react on dynamic DOM node textual modifications
     document.body.addEventListener('DOMCharacterDataModified', function(e) {
       var parentNodeName = e.target.parentNode.nodeName;
-      if ((parentNodeName !== 'TEXTAREA') &&
-          (parentNodeName !== 'INPUT') &&
-          (parentNodeName !== 'SCRIPT')) {        
+      if (BLACKLIST.indexOf(parentNodeName) === -1) {
         e.target.textContent = applyRules(rules, e.target.textContent);
       }
     }, false);

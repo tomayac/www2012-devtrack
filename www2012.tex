@@ -1,4 +1,4 @@
-\documentclass{acm_proc_article-sp}
+\documentclass{sig-alternate}
 
 \usepackage[greek, english]{babel}
 \usepackage[utf8]{inputenc}
@@ -84,12 +84,12 @@ Thomas Steiner\\
 	\affaddr{08034 Barcelona, Spain}\\
 	\email{tsteiner@lsi.upc.edu}
 \alignauthor
-Ruben Verborgh\\
+Ruben Verborgh and Rik Van de Walle\\
 	\affaddr{Ghent University -- IBBT, ELIS}\\
 	\affaddr{Multimedia Lab}\\
-	\affaddr{Gaston Crommenlaan 8/201}\\
+	%\affaddr{Gaston Crommenlaan 8/201}\\
 	\affaddr{9050 Ghent, Belgium}\\
-	\email{ruben.verborgh@ugent.be}
+	\email{\{ruben.verborgh, rik.vandewalle\}@ugent.be}
 }
 \maketitle
 
@@ -173,7 +173,7 @@ phens instead.
 Keyboards only have one symbol for both a~beginning and an end quote, namely \Verb!"!.
 Commonly referred to as a~typewriter or programmer's quote, it does not indicate to which part of the quotation it belongs.
 Therefore, ``curved'' quotes have been introduced as they are able to make this distinction.
-A similar situation is given for typewriter apostrophes \textquotesingle, which should be replaced by typographic apostrophes ' like in ``don't'', or ``Randall Munroe's''.
+A~similar situation is given for typewriter apostrophes \textquotesingle, which should be replaced by typographic apostrophes ' like in ``don't'', or ``Randall Munroe's''.
 
 \subsection{Further Use Cases}
 In this Subsection, we present further use cases where client-side fixing of Web pages can be considered useful.
@@ -199,7 +199,10 @@ They are written using a~combination of standard Web technologies, such as HTML,
 There are several types of extensions; for this paper we focus on extensions based on so-called \emph{content scripts}.
 Content scripts are JavaScript programs that run in the context of Web pages via dynamic code injection.
 By using the standard Document Object Model (DOM), they can modify details of Web pages.
-In the concrete case, we based our implementation on Google Chrome browser extensions\footnote{\url{http://code.google.com/chrome/extensions/docs.html}}.
+In the concrete case, we based our implementation on Google Chrome browser extensions\footnote{\url{http://code.google.com/chrome/extensions/docs.html}},
+albeit given the lightweight architecture of browser extensions
+with the common building blocks JavaScript, HTML, and CSS,
+porting the extension to other browsers is possible.
 
 \subsection{Part-of-Speech Tagging}
 Simple typographic annoyances, like triple full stops instead of ellipses, can be easily fixed via regular expressions (here using JavaScript syntax):
@@ -209,9 +212,9 @@ Simple typographic annoyances, like triple full stops instead of ellipses, can b
 More complicated annoyances, like omission of the Oxford comma, not to mention xkcd \#37, however,
 require basic text understanding in order to only be fixed where adequate, \emph{i.e.}, 
 in lists of three or more items.
-On a~similar note, it would harm the rules of xkcd \#37 to replace ``A bad-ass is afraid, but does it anyway'' by ``A bad ass-is afraid, but does it anyway'', as ``is'' is not a~noun.
+On a~similar note, it would harm the rules of xkcd \#37 to replace ``A~bad-ass is afraid, but does it anyway'' by ``A~bad ass-is afraid, but does it anyway'', as ``is'' is not a~noun.
 
-A simple definition of part-of-speech tagging (POS) is the process of identifying words in a~text as nouns, verbs, adjectives, adverbs, etc., based on both their definition, as well as their context.
+A~simple definition of part-of-speech tagging (POS) is the process of identifying words in a~text as nouns, verbs, adjectives, adverbs, etc., based on both their definition, as well as their context.
 Our processing chain supports part-of-speech tagging for the English language via an open source JavaScript library called jspos\footnote{\url{http://code.google.com/p/jspos/}},
 eventually based on Eric Brill's POS tagger~\cite{brill1992simple}.
 The algorithm behind the Brill tagger assigns a~tag to each word and later changes those tags using a~set of predefined rules.
@@ -237,7 +240,7 @@ We are not talking about the HTML source code of a~Web page,
 but about the (in modern Web applications potentially dynamically generated) value of all nodes
 of the DOM tree with a~JavaScript \texttt{nodeType} of integer $3$,
 which corresponds to \texttt{Node.TEXT\_NODE}.
-A naive approach would be to use \texttt{document.body.textContent}, however,
+A~naive approach would be to use \texttt{document.body.textContent}, however,
 this method neglects the context of the origin of the text.
 It would no longer be clear what text fragments belong together, \emph{e.g.}, to the same paragraph.
 Instead, per-element text node analysis is necessary.
@@ -264,6 +267,7 @@ Finally, the \Verb!title! element deserves special attention.
 While it resides in the \Verb!head! element and thus out of the visible part of the DOM~(in the \Verb!body! element),
 browsers usually display the title in a~prominent place.
 For that reason, title changes are separately monitored by the \Verb!DOMSubtreeModified! event.
+The complete pseudocode for the implemented browser extension is given in \autoref{code:xkcd}.
 
 \begin{lstlisting}[caption=Pseudocode for the browser extension's logic., label=code:xkcd, float=h]
 // Initial processing
@@ -291,9 +295,6 @@ function processRules(text node)
 end function  
 \end{lstlisting} 
 
-With that, we have all the building blocks in place to fix the Web, one page at a~time.
-The complete pseudocode for the implemented browser extension is given in \autoref{code:xkcd}.
-
 \begin{figure}[h!]
 \vspace{+10pt}
 \begin{center}
@@ -303,11 +304,25 @@ The complete pseudocode for the implemented browser extension is given in \autor
 \label{fig:editor}
 \end{figure}
 
+\subsection{Practicability Considerations}
+The extension works best, if the user is not even aware of its
+presence---it should simply silently fix the Web.
+One important aspect therefore is smoothness and speed.
+The extension only gets active when everything on the page has rendered, \emph{i.e.},
+when the document is idle.
+On purpose we chose not to highlight any changes made by the extension,
+albeit implementing it would be trivial.
+A~blacklist of HTML tags (\texttt{input}, \texttt{code}, \texttt{textarea}, \texttt{pre})
+ensures that no undesired corrections are being made.
+Accessibility of Web pages can be improved by a~future version of the extension, \emph{e.g.},
+by annotating emoticons semantically.
+A~further use case could be autocorrecting user input.
+
 \section{Conclusion}
 While the extension itself is ideally directly tested in a~browser, \autoref{fig:editor} shows the rules editor,
 which allows for new rules to be added, undesired rules to be deactivated, or existing rules to be modified.
-We have published our extension on the Chrome Web Store\footnote{\url{https://chrome.google.com/webstore/detail/kjlobohamcahepbjhcnjhhpdgmhjkjli}} and invite the reader to test it thoroughly.
-As a teaser, it is a very satisfying dumb ass-experience to read the Wikipedia page on the Oxford comma.
+We have published our extension on the Chrome Web Store\footnote{\url{http://bit.ly/xkcd37}} and invite the reader to test it thoroughly.
+As a~teaser, it is a~very satisfying dumb ass-experience to read the Wikipedia page on the Oxford comma.
 Fun is to be had.
 
 \section{Acknowledgments}
